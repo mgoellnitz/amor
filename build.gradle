@@ -1,0 +1,142 @@
+defaultTasks 'clean', 'build'
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+ext.tangram_version = '0.7'
+
+ext.servlet_spec = "2.5"
+ext.jsp_spec = "2.0"
+ext.yui_version = "2.4.6"
+
+// don't let gradle work with its defaults on my files...
+webAppDirName = 'disabled'
+
+repositories {
+  mavenLocal()
+  // most of the usual stuff
+  maven { url "http://repo1.maven.org/maven2" }
+  // needed for latest spring framework and security versions
+  maven { url "http://repository.springsource.com/maven/bundles/release" }
+  // needed for latest datanucleus versions
+  maven { url "http://www.datanucleus.org/downloads/maven2" }
+}
+
+jar.enabled = true 
+
+// Project specific default output directory
+eclipse.classpath.conventionMapping.defaultOutputDir = { new File(project.projectDir, 'build/classes/main') }
+
+configurations {
+  libs 
+  webapp
+  dn
+}
+
+artifacts {
+  archives war
+  libs jar
+}
+
+dependencies {
+  webapp "tangram:gae-webapp:$tangram_version"
+  
+  compile "tangram:gae:$tangram_version"
+  
+  providedCompile "javax.servlet:servlet-api:$servlet_spec"
+  providedCompile "javax.servlet:jsp-api:$jsp_spec"
+  
+  // To exclude original YUICompressor jar from output war
+  providedCompile "com.yahoo.platform.yui:yuicompressor:$yui_version"
+  
+  testCompile "junit:junit:4.10"
+
+  dn "org.datanucleus:datanucleus-enhancer:1.1.4"
+}
+
+clean.doFirst {
+    copy {
+        from "$buildDir/war/WEB-INF/appengine-generated"
+        into 'local-db'
+        include '**/**'
+    }
+}
+
+compileJava.doLast {
+    try {
+        ant.taskdef(name: 'enhance', classpath: configurations.dn.asPath, classname: 'org.datanucleus.enhancer.tools.EnhancerTask')
+        ant.enhance(failonerror: true, verbose: true, checkonly: false, dir: sourceSets['main'].output.classesDir.canonicalPath) {
+            classpath {
+                // for the log configuration...
+                pathelement(path: '.')
+                // The classes to be enhanced need to be on the class path
+                pathelement(path: sourceSets['main'].output.classesDir.canonicalPath)
+                // this is the real class path for the tool (s.a.)
+                pathelement(path: configurations.dn.asPath)
+                // this is the real class path for the tool (s.a.)
+                pathelement(path: sourceSets['main'].compileClasspath.asPath)
+            }
+            fileset(dir: sourceSets['main'].output.classesDir.canonicalPath)
+        }
+    } catch(Exception e) {
+        println ''
+        e.printStackTrace(System.out);
+        throw new GradleException('An error occurred enhancing persistence capable classes.', e)
+    }
+}
+
+war.doFirst {
+  // Strange way of overwriting things - it must be the first webapp dependency
+  if (configurations.webapp.dependencies.size() > 0) {
+    String archiveFileName = configurations.webapp.asPath
+    int idx = archiveFileName.indexOf(';')
+    if (idx >= 0) {
+      archiveFileName = archiveFileName.substring(0, idx)
+    } // if
+    println "unzipping $archiveFileName"
+    ant.unzip(src: archiveFileName, dest: "$buildDir/target")
+  } // if
+  
+  // No css and js minifying here
+  copy {
+    from 'src/main/webapp'
+    into "$buildDir/target"
+    include '**/**'
+  }
+  // ...and to again include those YUICompressor's dependencies with a different name
+  copy {
+    from "$buildDir/target"
+    into "$buildDir/target"
+    include '**/yui*'
+    rename 'yui', 'aaa-yui'
+  }
+  into ('') {
+    from "$buildDir/target"
+    include 'WEB-INF/lib/aaa-*'
+    include 'WEB-INF/lib/js-*'
+  }
+  into ('') {
+    from "$buildDir/target"
+    exclude 'WEB-INF/lib/**'
+  }
+}
+
+war {
+  classpath = jar.outputs.files + configurations.runtime - configurations.providedRuntime
+  excludes = [ "classes/**" ]
+}
+
+// to use the local dev_appserver
+war.doLast {
+  ant.unzip(src: war.archivePath, dest: "$buildDir/war")
+  copy {
+    from 'local-db'
+    into "$buildDir/war/WEB-INF/appengine-generated"
+    include '**/**'
+  }
+}
