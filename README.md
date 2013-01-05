@@ -10,21 +10,29 @@ Setup system:
 
 Build project
 
-  gradle clean build
+```bash
+gradle clean build
+```
 
 Start  the local development app server
 
-  dev_appserver -p 12380 build\war
+```bash
+dev_appserver -p 12380 build\war
+```
 
 Import data
 
-  bulkloader.py --restore --url=http://localhost:12380/remote_api --filename=online-src/amor.db
+```bash
+bulkloader.py --restore --url=http://localhost:12380/remote_api --filename=online-src/amor.db
+```
 
 (Now you should be able to log in)
 
 Import templates and groovy codes (the real server software)
 
-  bulkloader.py --restore --url=http://localhost:12380/remote_api --filename=online-src/amor-code.db
+```bash
+bulkloader.py --restore --url=http://localhost:12380/remote_api --filename=online-src/amor-code.db
+```
 
 Wait 4 Minutes, stop the Development App Server and restart it, than call http://localhost:12380/
 
