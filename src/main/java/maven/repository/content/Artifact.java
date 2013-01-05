@@ -19,6 +19,13 @@ public class Artifact extends GaeContent {
     private String dataMd5;
 
     @Persistent
+    private Blob sources;
+
+    private String sourcesSha1;
+
+    private String sourcesMd5;
+
+    @Persistent
     private Blob pom;
 
     private String pomSha1;
@@ -61,6 +68,36 @@ public class Artifact extends GaeContent {
 
     public void setDataMd5(String dataMd5) {
         this.dataMd5 = dataMd5;
+    }
+
+
+    public Blob getSources() {
+        return sources;
+    }
+
+
+    public void setSources(Blob sources) {
+        this.sources = sources;
+    }
+
+
+    public String getSourcesSha1() {
+        return sourcesSha1;
+    }
+
+
+    public void setSourcesSha1(String sourcesSha1) {
+        this.sourcesSha1 = sourcesSha1;
+    }
+
+
+    public String getSourcesMd5() {
+        return sourcesMd5;
+    }
+
+
+    public void setSourcesMd5(String sourcesMd5) {
+        this.sourcesMd5 = sourcesMd5;
     }
 
 
