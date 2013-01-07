@@ -16,7 +16,7 @@ gradle clean build
 
 Start  the local development app server
 
-```bash
+```
 dev_appserver -p 12380 build\war
 ```
 
