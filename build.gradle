@@ -139,3 +139,8 @@ war.doLast {
     include '**/**'
   }
 }
+
+// Sorry, just for windows for now
+task runWar (type :Exec) {
+    commandLine 'cmd', '/c', 'dev_appserver --jvm_flag=-Ddatastore.default_high_rep_job_policy_unapplied_job_pct=1 --disable_update_check -p 12380 build\\war'
+}
