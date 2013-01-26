@@ -9,9 +9,11 @@
     
     <static-files>
         <include path="/ckeditor/**.*" expiration="30d" />
-        <include path="/editor/**.*" expiration="1h" />
+        <include path="/editor/**.*" expiration="30d" />
         <include path="/t/**.*" expiration="30d" />
         <include path="/favicon.ico" expiration="30d" />
+		<include path="/robots.txt" expiration="30d" />
+		<include path="/index.html" expiration="30d" />
     </static-files>
 
     <static-error-handlers>
