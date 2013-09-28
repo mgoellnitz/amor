@@ -30,6 +30,15 @@ import com.google.appengine.api.datastore.Blob;
 public class Artifact extends GaeContent {
 
     @Persistent
+    private Blob addon;
+
+    private String addonSha1;
+
+    private String addonMd5;
+
+    private String addonClassifier;
+
+    @Persistent
     private Blob data;
 
     private String dataSha1;
@@ -57,6 +66,46 @@ public class Artifact extends GaeContent {
     private String version;
 
     private String packaging;
+
+
+    public Blob getAddon() {
+        return addon;
+    }
+
+
+    public void setAddon(Blob addon) {
+        this.addon = addon;
+    }
+
+
+    public String getAddonSha1() {
+        return addonSha1;
+    }
+
+
+    public void setAddonSha1(String addonSha1) {
+        this.addonSha1 = addonSha1;
+    }
+
+
+    public String getAddonMd5() {
+        return addonMd5;
+    }
+
+
+    public void setAddonMd5(String addonMd5) {
+        this.addonMd5 = addonMd5;
+    }
+
+
+    public String getAddonClassifier() {
+        return addonClassifier;
+    }
+
+
+    public void setAddonClassifier(String addonClassifier) {
+        this.addonClassifier = addonClassifier;
+    }
 
 
     public Blob getData() {
