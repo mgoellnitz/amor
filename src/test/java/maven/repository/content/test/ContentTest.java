@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 import maven.repository.content.Artifact;
 
 import org.junit.Test;
-import org.springframework.util.Assert;
+import org.junit.Assert;
 
 public class ContentTest {
 
@@ -37,7 +37,7 @@ public class ContentTest {
                 flag = true;
             } // if
         } // for
-        Assert.isTrue(flag, "Classes not enhanced - output unusable");
+        Assert.assertTrue("Classes not enhanced - output unusable", flag);
     } // testIsEnhanced()
 
 } // ContentTest
