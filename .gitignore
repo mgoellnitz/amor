@@ -4,3 +4,5 @@
 /.settings
 /.gradle
 /build
+/.nb-gradle/private/
+/.nb-gradle/profiles/private/
