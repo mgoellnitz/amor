@@ -19,7 +19,7 @@ webAppDirName = 'disabled'
 repositories {
   // most of the usual stuff
   mavenCentral()
-  // needed for latest datanucleus versions
+  // needed for latest DataNucleus versions
   maven { url "http://www.datanucleus.org/downloads/maven2" }
   // the tangram stuff
   maven { url "http://my-amor.appspot.com/repository" }
@@ -82,7 +82,7 @@ compileJava.doLast {
         }
     } catch(Exception e) {
         println ''
-        e.printStackTrace(System.out);
+        e.printStackTrace(System.out)
         throw new GradleException('An error occurred enhancing persistence capable classes.', e)
     }
 }
